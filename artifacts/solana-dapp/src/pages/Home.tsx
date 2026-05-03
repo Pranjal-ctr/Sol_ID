@@ -29,7 +29,6 @@ export default function Home() {
 
   return (
     <div className="app-shell">
-      {/* ── Header ── */}
       <header className="app-header">
         <div className="logo">
           <span className="logo-icon">◎</span>
@@ -37,8 +36,6 @@ export default function Home() {
         </div>
         <div className="header-right">
           <div className="network-badge">Devnet</div>
-
-          {/* Identity chip — shown once profile is known */}
           {connected && !loading && profile && (
             <div className="header-identity-chip">
               <span className="header-identity-dot" />
@@ -48,7 +45,6 @@ export default function Home() {
               </span>
             </div>
           )}
-
           {connected && (
             <button className="disconnect-btn-sm" onClick={() => disconnect()}>
               Disconnect
@@ -57,11 +53,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ── Main ── */}
       <main className="app-main app-main-wide">
         {!connected ? (
-
-          /* ══ Disconnected: landing ══ */
           <div className="connect-panel">
             <div className="hero-icon">◎</div>
             <h1 className="hero-title">Decentralized Identity</h1>
@@ -72,19 +65,11 @@ export default function Home() {
             <WalletMultiButton className="wallet-btn-custom" />
             {connecting && <p className="connecting-hint">Waiting for wallet approval…</p>}
           </div>
-
         ) : (
-
-          /* ══ Connected ══ */
           <div className="dashboard-layout">
-
-            {/* ── Left sidebar ── */}
             <aside className="sidebar">
-
-              {/* Identity card: username if profile loaded, wallet otherwise */}
               <div className="info-card sidebar-identity-card">
                 {loading ? (
-                  /* Checking PDA… */
                   <div className="sidebar-identity-checking">
                     <div className="sidebar-checking-spinner" />
                     <div>
@@ -93,7 +78,6 @@ export default function Home() {
                     </div>
                   </div>
                 ) : profile ? (
-                  /* Profile exists: show username */
                   <>
                     <div className="info-label">Identity</div>
                     <div className="sidebar-username">
@@ -109,7 +93,6 @@ export default function Home() {
                     </div>
                   </>
                 ) : (
-                  /* No profile: show wallet address */
                   <>
                     <div className="info-label">Wallet</div>
                     <div className="address-short">{shortenAddress(publicKey!.toBase58())}</div>
@@ -121,7 +104,6 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Balance card */}
               <div className="info-card">
                 <div className="info-label">Balance</div>
                 <div className="balance-amount">
@@ -140,10 +122,7 @@ export default function Home() {
               <WalletMultiButton className="wallet-btn-custom wallet-btn-sm" />
             </aside>
 
-            {/* ── Right column: program UI ── */}
             <div className="main-panels">
-
-              {/* Checking PDA — full-panel loading state */}
               {loading && (
                 <div className="identity-checking-panel">
                   <div className="identity-checking-ring">
@@ -153,17 +132,14 @@ export default function Home() {
                   <div className="identity-checking-text">
                     <p className="identity-checking-title">Verifying on-chain identity</p>
                     <p className="identity-checking-sub">
-                      Checking for a profile PDA at seeds{" "}
-                      <code>["profile", wallet]</code>
+                      Checking for a profile PDA at seeds <code>["profile", wallet]</code>
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* ── No profile → Create Profile screen ── */}
               {!loading && !profile && <CreateProfile />}
 
-              {/* ── Profile exists → Full dashboard ── */}
               {!loading && profile && (
                 <>
                   <Dashboard />
@@ -171,7 +147,6 @@ export default function Home() {
                   <ReviewWork />
                 </>
               )}
-
             </div>
           </div>
         )}

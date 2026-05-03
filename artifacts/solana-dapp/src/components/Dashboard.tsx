@@ -1,34 +1,19 @@
-/**
- * Dashboard — displays the connected wallet's on-chain identity and reputation.
- *
- * Data is fetched from the UserProfile PDA (seeds: ["profile", wallet]) and
- * WorkRecord PDAs (filtered by profile pubkey) via the useProgram hook.
- *
- * The sidebar in Home.tsx now shows wallet address as a secondary detail,
- * so Dashboard focuses solely on the reputation metrics.
- */
-
 import { useProgram } from "@/hooks/useProgram";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
 function ReputationRing({ score }: { score: number }) {
-  const MAX  = 200;
-  const pct  = Math.min(score / MAX, 1);
-  const R    = 40;
+  const MAX = 200;
+  const pct = Math.min(score / MAX, 1);
+  const R = 40;
   const circ = 2 * Math.PI * R;
   const dash = pct * circ;
 
   return (
     <svg className="db-ring-svg" viewBox="0 0 100 100" aria-hidden>
+      <circle cx="50" cy="50" r={R} fill="none" stroke="hsl(230 18% 17%)" strokeWidth="8" />
       <circle
-        cx="50" cy="50" r={R}
-        fill="none"
-        stroke="hsl(230 18% 17%)"
-        strokeWidth="8"
-      />
-      <circle
-        cx="50" cy="50" r={R}
+        cx="50"
+        cy="50"
+        r={R}
         fill="none"
         stroke="url(#repGrad)"
         strokeWidth="8"
@@ -39,7 +24,7 @@ function ReputationRing({ score }: { score: number }) {
       />
       <defs>
         <linearGradient id="repGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor="hsl(261 75% 65%)" />
+          <stop offset="0%" stopColor="hsl(261 75% 65%)" />
           <stop offset="100%" stopColor="hsl(165 72% 50%)" />
         </linearGradient>
       </defs>
@@ -67,13 +52,11 @@ function StatCard({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-
 export default function Dashboard() {
   const { profile, workRecords, loading, refresh } = useProgram();
 
   const verified = workRecords.filter((w) => w.verified).length;
-  const pending  = workRecords.filter((w) => !w.verified).length;
+  const pending = workRecords.filter((w) => !w.verified).length;
 
   if (loading) {
     return (
@@ -93,31 +76,27 @@ export default function Dashboard() {
   if (!profile) return null;
 
   const repScore = profile.reputationScore ?? 0;
-  const repTier  =
-    repScore >= 100 ? "Elite"   :
-    repScore >= 50  ? "Trusted" :
-    repScore >= 20  ? "Rising"  :
-                     "Newcomer";
+  const repTier =
+    repScore >= 100 ? "Elite" :
+    repScore >= 50 ? "Trusted" :
+    repScore >= 20 ? "Rising" :
+    "Newcomer";
 
   const tierColor =
-    repScore >= 100 ? "db-tier--elite"   :
-    repScore >= 50  ? "db-tier--trusted" :
-    repScore >= 20  ? "db-tier--rising"  :
-                     "db-tier--new";
+    repScore >= 100 ? "db-tier--elite" :
+    repScore >= 50 ? "db-tier--trusted" :
+    repScore >= 20 ? "db-tier--rising" :
+    "db-tier--new";
 
-  // Points to reach next tier
   const nextTierPts =
     repScore >= 100 ? 0 :
-    repScore >= 50  ? 100 - repScore :
-    repScore >= 20  ? 50  - repScore :
-                     20  - repScore;
+    repScore >= 50 ? 100 - repScore :
+    repScore >= 20 ? 50 - repScore :
+    20 - repScore;
 
   return (
     <div className="db-wrap">
-      {/* ── Identity hero ── */}
       <div className="db-hero">
-
-        {/* Reputation ring + score */}
         <div className="db-ring-wrap">
           <ReputationRing score={repScore} />
           <div className="db-ring-center">
@@ -126,56 +105,34 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Username + tier — wallet is shown in sidebar */}
         <div className="db-identity">
           <div className="db-username">
             {profile.username}
             <span className="db-sol-suffix">.sol</span>
           </div>
-          <span className={`db-tier ${tierColor}`}>{repTier}</span>
+          <div className="db-hero-row">
+            <span className={`db-tier ${tierColor}`}>{repTier}</span>
+            <span className="db-score-badge">{repScore} points</span>
+          </div>
           <div className="db-pda-note">
             UserProfile PDA · <code>["profile", wallet]</code>
           </div>
         </div>
 
-        {/* Refresh */}
-        <button
-          className="db-refresh-btn"
-          onClick={refresh}
-          disabled={loading}
-          title="Refresh on-chain data"
-        >
+        <button className="db-refresh-btn" onClick={refresh} disabled={loading} title="Refresh on-chain data">
           <span className={loading ? "db-spin" : ""}>↻</span>
         </button>
       </div>
 
-      {/* ── Stats grid ── */}
       <div className="db-stats-grid">
-        <StatCard
-          label="Reputation Score"
-          value={repScore}
-          sub="Points earned on-chain"
-          accent="purple"
-        />
-        <StatCard
-          label="Works Submitted"
-          value={profile.workCount ?? 0}
-          sub={`${verified} verified · ${pending} pending`}
-          accent="teal"
-        />
-        <StatCard
-          label="Tier"
-          value={repTier}
-          sub={repScore >= 100 ? "Max tier reached" : `${nextTierPts} pts to next tier`}
-          accent="amber"
-        />
+        <StatCard label="Reputation Score" value={repScore} sub="Points earned on-chain" accent="purple" />
+        <StatCard label="Works Submitted" value={profile.workCount ?? 0} sub={`${verified} verified · ${pending} pending`} accent="teal" />
+        <StatCard label="Tier" value={repTier} sub={repScore >= 100 ? "Max tier reached" : `${nextTierPts} pts to next tier`} accent="amber" />
       </div>
 
-      {/* ── On-chain proof note ── */}
       <div className="db-proof-note">
         <span className="db-proof-dot" />
-        Live data fetched from Solana Devnet · PDA seed{" "}
-        <code className="db-proof-code">["profile", wallet]</code>
+        Live data fetched from Solana Devnet · PDA seed <code>["profile", wallet]</code>
       </div>
     </div>
   );
