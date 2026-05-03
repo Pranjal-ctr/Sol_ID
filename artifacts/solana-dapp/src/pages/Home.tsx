@@ -3,6 +3,8 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useProgram } from "@/hooks/useProgram";
+import CreateProfile from "@/components/CreateProfile";
+import Dashboard from "@/components/Dashboard";
 
 function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
@@ -21,95 +23,7 @@ function TxLink({ sig }: { sig: string }) {
   );
 }
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-
-function CreateProfilePanel() {
-  const { callCreateProfile, loading } = useProgram();
-  const [username, setUsername]        = useState("");
-  const [status, setStatus]            = useState<"idle" | "pending" | "success" | "error">("idle");
-  const [message, setMessage]          = useState("");
-  const [sig, setSig]                  = useState("");
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!username.trim()) return;
-    setStatus("pending");
-    setMessage("");
-    const result = await callCreateProfile(username.trim());
-    if (result.status === "success") {
-      setStatus("success");
-      setSig(result.sig ?? "");
-      setMessage("Profile created on-chain!");
-    } else {
-      setStatus("error");
-      setMessage(result.error ?? "Unknown error");
-    }
-  }
-
-  return (
-    <div className="panel">
-      <div className="panel-header">
-        <span className="panel-icon">◎</span>
-        <h2 className="panel-title">Create Identity</h2>
-      </div>
-      <p className="panel-desc">
-        No on-chain profile found for this wallet. Create one to start
-        building your decentralized reputation.
-      </p>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="field">
-          <label className="field-label">Username</label>
-          <input
-            className="field-input"
-            placeholder="alice.sol"
-            maxLength={50}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={status === "pending" || loading}
-          />
-          <span className="field-hint">Max 50 characters · stored on-chain</span>
-        </div>
-        <button
-          className="btn-primary"
-          type="submit"
-          disabled={!username.trim() || status === "pending" || loading}
-        >
-          {status === "pending" ? "Sending transaction…" : "Create Profile"}
-        </button>
-        {status === "success" && (
-          <div className="tx-success">
-            {message} <TxLink sig={sig} />
-          </div>
-        )}
-        {status === "error" && (
-          <div className="tx-error">{message}</div>
-        )}
-      </form>
-    </div>
-  );
-}
-
-function ProfileCard() {
-  const { profile, workRecords } = useProgram();
-  if (!profile) return null;
-
-  const verified   = workRecords.filter((w) => w.verified).length;
-  const pending    = workRecords.filter((w) => !w.verified).length;
-
-  return (
-    <div className="profile-card">
-      <div className="profile-avatar">{profile.username.slice(0, 2).toUpperCase()}</div>
-      <div className="profile-info">
-        <div className="profile-name">{profile.username}</div>
-        <div className="profile-meta">
-          <span className="rep-badge">◎ {profile.reputationScore} rep</span>
-          <span className="work-stat">{verified} verified</span>
-          <span className="work-stat pending">{pending} pending</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+// ── Submit Work ───────────────────────────────────────────────────────────────
 
 function SubmitWorkPanel() {
   const { callSubmitWork, loading } = useProgram();
@@ -144,8 +58,8 @@ function SubmitWorkPanel() {
         <h2 className="panel-title">Submit Work</h2>
       </div>
       <p className="panel-desc">
-        Submit a job record with a proof link (IPFS hash, Arweave URL, etc.).
-        Each job ID can only be submitted once per profile.
+        Submit a job record with a proof link. Each job ID can only be submitted
+        once per profile — enforced at the PDA level.
       </p>
       <form className="form" onSubmit={handleSubmit}>
         <div className="field">
@@ -189,6 +103,8 @@ function SubmitWorkPanel() {
   );
 }
 
+// ── Work Records ──────────────────────────────────────────────────────────────
+
 function WorkRecordRow({
   record,
   ownerKey,
@@ -196,9 +112,9 @@ function WorkRecordRow({
   record: { jobId: string; proofLink: string; verified: boolean };
   ownerKey: string;
 }) {
-  const { callVerifyWork, callRejectWork, wallet } = useProgram();
-  const [status, setStatus]                        = useState<"idle" | "pending">("idle");
-  const [result, setResult]                        = useState<{ ok: boolean; sig?: string; error?: string } | null>(null);
+  const { callVerifyWork, callRejectWork } = useProgram();
+  const [status, setStatus] = useState<"idle" | "pending">("idle");
+  const [result, setResult] = useState<{ ok: boolean; sig?: string; error?: string } | null>(null);
 
   async function handleVerify() {
     setStatus("pending");
@@ -235,37 +151,21 @@ function WorkRecordRow({
         rel="noreferrer"
         title={record.proofLink}
       >
-        {record.proofLink.length > 52
-          ? record.proofLink.slice(0, 52) + "…"
-          : record.proofLink}
+        {record.proofLink.length > 52 ? record.proofLink.slice(0, 52) + "…" : record.proofLink}
       </a>
-
       {!record.verified && (
         <div className="work-actions">
-          <button
-            className="btn-verify"
-            onClick={handleVerify}
-            disabled={busy}
-            title="Verify — adds +10 reputation"
-          >
+          <button className="btn-verify" onClick={handleVerify} disabled={busy} title="Verify — adds +10 reputation">
             {busy ? "…" : "✓ Verify +10"}
           </button>
-          <button
-            className="btn-reject"
-            onClick={handleReject}
-            disabled={busy}
-            title="Reject — subtracts -5 reputation"
-          >
+          <button className="btn-reject" onClick={handleReject} disabled={busy} title="Reject — subtracts -5 reputation">
             {busy ? "…" : "✕ Reject −5"}
           </button>
         </div>
       )}
-
       {result && (
         result.ok ? (
-          <div className="tx-success-sm">
-            Done! <TxLink sig={result.sig!} />
-          </div>
+          <div className="tx-success-sm">Done! <TxLink sig={result.sig!} /></div>
         ) : (
           <div className="tx-error-sm">{result.error}</div>
         )
@@ -306,9 +206,9 @@ function WorkRecordsPanel() {
 
 export default function Home() {
   const { publicKey, connected, disconnect, connecting } = useWallet();
-  const { connection }  = useConnection();
-  const { profile, loading, refresh } = useProgram();
-  const [balance, setBalance]         = useState<number | null>(null);
+  const { connection } = useConnection();
+  const { profile, loading } = useProgram();
+  const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
     if (!publicKey || !connected) { setBalance(null); return; }
@@ -353,8 +253,8 @@ export default function Home() {
           </div>
         ) : (
           /* ── Connected ── */
-          <div className="dashboard">
-            {/* Left column: wallet info */}
+          <div className="dashboard-layout">
+            {/* Left sidebar — wallet info */}
             <aside className="sidebar">
               <div className="info-card">
                 <div className="info-label">Wallet</div>
@@ -375,36 +275,25 @@ export default function Home() {
                 <div className="network-label">Solana Devnet</div>
               </div>
 
-              {profile && (
-                <div className="info-card rep-card">
-                  <div className="info-label">Reputation</div>
-                  <div className="rep-score">{profile.reputationScore}</div>
-                  <div className="rep-breakdown">
-                    <span>{profile.workCount} total jobs</span>
-                    <span>·</span>
-                    <span>{profile.username}</span>
-                  </div>
-                  <button className="btn-ghost" onClick={refresh} disabled={loading}>
-                    {loading ? "Refreshing…" : "↻ Refresh"}
-                  </button>
-                </div>
-              )}
-
               <WalletMultiButton className="wallet-btn-custom wallet-btn-sm" />
             </aside>
 
-            {/* Right column: program panels */}
+            {/* Right column — program UI */}
             <div className="main-panels">
-              {!profile && !loading && <CreateProfilePanel />}
               {loading && (
                 <div className="loading-state">
                   <span className="loading-dots">···</span>
                   <span>Fetching on-chain data…</span>
                 </div>
               )}
-              {profile && (
+
+              {/* Create Profile — shown until a profile exists */}
+              {!loading && !profile && <CreateProfile />}
+
+              {/* Dashboard — shown once profile is loaded */}
+              {!loading && profile && (
                 <>
-                  <ProfileCard />
+                  <Dashboard />
                   <SubmitWorkPanel />
                   <WorkRecordsPanel />
                 </>
