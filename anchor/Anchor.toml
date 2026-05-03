@@ -5,14 +5,26 @@ anchor_version = "0.30.1"
 resolution = true
 skip-lint = false
 
+# ── Program IDs per cluster ───────────────────────────────────────────────────
+# After `anchor deploy` on devnet, replace the placeholder below with the
+# real program ID printed in the terminal, then run `anchor build` again so
+# the IDL and binary stay in sync.
+
 [programs.localnet]
+identity_reputation = "IdentRep11111111111111111111111111111111111"
+
+[programs.devnet]
 identity_reputation = "IdentRep11111111111111111111111111111111111"
 
 [registry]
 url = "https://api.apr.dev"
 
+# ── Active provider ───────────────────────────────────────────────────────────
+# Switch `cluster` between "Localnet" and "Devnet" as needed.
+# `wallet` must point to a keypair that holds devnet SOL.
+
 [provider]
-cluster = "Localnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
