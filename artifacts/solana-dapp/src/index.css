@@ -1,0 +1,500 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ── Dark theme (always-on) ─────────────────────────── */
+:root {
+  --background:      230 22% 7%;
+  --foreground:      220 14% 92%;
+  --border:          230 18% 16%;
+  --input:           230 18% 20%;
+  --ring:            261 75% 65%;
+
+  --card:            230 22% 11%;
+  --card-foreground: 220 14% 92%;
+  --card-border:     230 18% 17%;
+
+  --popover:         230 22% 11%;
+  --popover-foreground: 220 14% 92%;
+  --popover-border:  230 18% 17%;
+
+  /* Solana purple */
+  --primary:         261 75% 65%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary:       230 18% 16%;
+  --secondary-foreground: 220 14% 80%;
+
+  --muted:           230 18% 14%;
+  --muted-foreground: 220 10% 50%;
+
+  /* Solana teal/green */
+  --accent:          165 72% 50%;
+  --accent-foreground: 230 22% 7%;
+
+  --destructive:     0 70% 58%;
+  --destructive-foreground: 0 0% 100%;
+
+  --chart-1: 261 75% 65%;
+  --chart-2: 165 72% 50%;
+  --chart-3: 45 90% 60%;
+  --chart-4: 200 80% 55%;
+  --chart-5: 320 70% 60%;
+
+  --app-font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 0.625rem;
+
+  --opaque-button-border-intensity: 9;
+  --button-outline: rgba(255,255,255,.10);
+  --badge-outline: rgba(255,255,255,.05);
+  --elevate-1: rgba(255,255,255,.04);
+  --elevate-2: rgba(255,255,255,.09);
+
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  --sidebar: 230 22% 9%;
+  --sidebar-foreground: 220 14% 92%;
+  --sidebar-border: 230 18% 16%;
+  --sidebar-primary: 261 75% 65%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 165 72% 50%;
+  --sidebar-accent-foreground: 230 22% 7%;
+  --sidebar-ring: 261 75% 65%;
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+}
+
+/* ── Base layer ─────────────────────────────────────── */
+@layer base {
+  * { @apply border-border; }
+  body { @apply font-sans antialiased bg-background text-foreground; }
+}
+
+/* ══════════════════════════════════════════════════════
+   App Layout
+══════════════════════════════════════════════════════ */
+
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(230 22% 8% / 0.8);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, hsl(261 75% 65%), hsl(165 72% 50%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.logo-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: hsl(var(--foreground));
+}
+
+.network-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: hsl(165 72% 50% / 0.12);
+  color: hsl(165 72% 55%);
+  border: 1px solid hsl(165 72% 50% / 0.25);
+}
+
+/* ── Main ───────────────────────────────────────────── */
+.app-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+/* ── Disconnected / connect panel ───────────────────── */
+.connect-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.hero-icon {
+  font-size: 4rem;
+  background: linear-gradient(135deg, hsl(261 75% 65%), hsl(165 72% 50%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.04); }
+}
+
+.hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  color: hsl(var(--foreground));
+}
+
+.hero-sub {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  max-width: 340px;
+}
+
+.connecting-hint {
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+  animation: blink 1.2s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+/* ── Connected / wallet panel ───────────────────────── */
+.wallet-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: hsl(165 72% 50% / 0.1);
+  color: hsl(165 72% 55%);
+  border: 1px solid hsl(165 72% 50% / 0.2);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: hsl(165 72% 55%);
+  box-shadow: 0 0 6px hsl(165 72% 55% / 0.8);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* ── Info cards ─────────────────────────────────────── */
+.info-card {
+  width: 100%;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--card-border));
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: hsl(var(--muted-foreground));
+}
+
+.address-full {
+  font-family: var(--app-font-mono);
+  font-size: 0.75rem;
+  color: hsl(var(--foreground));
+  word-break: break-all;
+  line-height: 1.6;
+  opacity: 0.6;
+}
+
+.address-short {
+  font-family: var(--app-font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: hsl(var(--foreground));
+}
+
+.balance-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.balance-number {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, hsl(261 75% 65%), hsl(165 72% 50%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.balance-unit {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+}
+
+.loading-dots {
+  font-size: 1.75rem;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.2em;
+  animation: blink 1s step-start infinite;
+}
+
+.network-label {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+}
+
+/* ── Action row ─────────────────────────────────────── */
+.action-row {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.disconnect-btn {
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.625rem;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.disconnect-btn:hover {
+  background: hsl(0 70% 58% / 0.1);
+  border-color: hsl(0 70% 58% / 0.4);
+  color: hsl(0 70% 65%);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.app-footer {
+  padding: 1.25rem 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  border-top: 1px solid hsl(var(--border));
+  letter-spacing: 0.03em;
+}
+
+/* ══════════════════════════════════════════════════════
+   Wallet Adapter UI overrides
+   The library ships its own CSS — we restyle to match
+   the dark theme.
+══════════════════════════════════════════════════════ */
+
+.wallet-adapter-button,
+.wallet-btn-custom.wallet-adapter-button {
+  background: linear-gradient(135deg, hsl(261 75% 60%), hsl(261 75% 50%)) !important;
+  color: #fff !important;
+  border-radius: 0.625rem !important;
+  font-family: var(--app-font-sans) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  padding: 0.65rem 1.4rem !important;
+  height: auto !important;
+  line-height: 1 !important;
+  border: none !important;
+  transition: opacity 0.15s ease, transform 0.1s ease !important;
+  cursor: pointer;
+}
+
+.wallet-adapter-button:hover,
+.wallet-btn-custom.wallet-adapter-button:hover {
+  opacity: 0.88 !important;
+  transform: translateY(-1px) !important;
+}
+
+.wallet-adapter-button:active {
+  transform: translateY(0) !important;
+}
+
+.wallet-btn-sm.wallet-adapter-button {
+  font-size: 0.8rem !important;
+  padding: 0.5rem 1rem !important;
+}
+
+/* Modal */
+.wallet-adapter-modal-wrapper {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--card-border)) !important;
+  border-radius: 1.25rem !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: hsl(var(--foreground)) !important;
+  font-family: var(--app-font-sans) !important;
+  font-weight: 700 !important;
+}
+
+.wallet-adapter-modal-list li button {
+  background: hsl(var(--muted)) !important;
+  border-radius: 0.75rem !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.wallet-adapter-modal-list li button:hover {
+  background: hsl(var(--secondary)) !important;
+}
+
+.wallet-adapter-modal-overlay {
+  background: rgba(0,0,0,0.7) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background: hsl(var(--muted)) !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  background: hsl(var(--secondary)) !important;
+}
+
+/* ── Elevation system (unchanged utility) ─────────────── */
+@layer utilities {
+  input[type="search"]::-webkit-search-cancel-button { @apply hidden; }
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+  .no-default-hover-elevate {}
+  .no-default-active-elevate {}
+  .toggle-elevate::before, .toggle-elevate-2::before {
+    content: ""; pointer-events: none; position: absolute; inset: 0;
+    border-radius: inherit; z-index: -1;
+  }
+  .toggle-elevate.toggle-elevated::before { background-color: var(--elevate-2); }
+  .border.toggle-elevate::before { inset: -1px; }
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) { position: relative; z-index: 0; }
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: ""; pointer-events: none; position: absolute; inset: 0;
+    border-radius: inherit; z-index: 999;
+  }
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after { background-color: var(--elevate-1); }
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after { background-color: var(--elevate-2); }
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after { inset: -1px; }
+}
