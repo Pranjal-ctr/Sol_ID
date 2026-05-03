@@ -37,6 +37,18 @@ export default function Home() {
         </div>
         <div className="header-right">
           <div className="network-badge">Devnet</div>
+
+          {/* Identity chip — shown once profile is known */}
+          {connected && !loading && profile && (
+            <div className="header-identity-chip">
+              <span className="header-identity-dot" />
+              <span className="header-identity-name">
+                {profile.username}
+                <span className="header-identity-suffix">.sol</span>
+              </span>
+            </div>
+          )}
+
           {connected && (
             <button className="disconnect-btn-sm" onClick={() => disconnect()}>
               Disconnect
@@ -48,7 +60,8 @@ export default function Home() {
       {/* ── Main ── */}
       <main className="app-main app-main-wide">
         {!connected ? (
-          /* ── Disconnected state ── */
+
+          /* ══ Disconnected: landing ══ */
           <div className="connect-panel">
             <div className="hero-icon">◎</div>
             <h1 className="hero-title">Decentralized Identity</h1>
@@ -59,18 +72,56 @@ export default function Home() {
             <WalletMultiButton className="wallet-btn-custom" />
             {connecting && <p className="connecting-hint">Waiting for wallet approval…</p>}
           </div>
+
         ) : (
-          /* ── Connected state ── */
+
+          /* ══ Connected ══ */
           <div className="dashboard-layout">
 
-            {/* ── Left sidebar: wallet info ── */}
+            {/* ── Left sidebar ── */}
             <aside className="sidebar">
-              <div className="info-card">
-                <div className="info-label">Wallet</div>
-                <div className="address-short">{shortenAddress(publicKey!.toBase58())}</div>
-                <div className="address-full mono">{publicKey!.toBase58()}</div>
+
+              {/* Identity card: username if profile loaded, wallet otherwise */}
+              <div className="info-card sidebar-identity-card">
+                {loading ? (
+                  /* Checking PDA… */
+                  <div className="sidebar-identity-checking">
+                    <div className="sidebar-checking-spinner" />
+                    <div>
+                      <div className="info-label">Checking identity</div>
+                      <div className="sidebar-checking-hint">Reading on-chain PDA…</div>
+                    </div>
+                  </div>
+                ) : profile ? (
+                  /* Profile exists: show username */
+                  <>
+                    <div className="info-label">Identity</div>
+                    <div className="sidebar-username">
+                      {profile.username}
+                      <span className="sidebar-sol-suffix">.sol</span>
+                    </div>
+                    <div className="sidebar-wallet-addr mono">
+                      {shortenAddress(publicKey!.toBase58(), 6)}
+                    </div>
+                    <div className="sidebar-verified-badge">
+                      <span className="sidebar-verified-dot" />
+                      On-chain identity verified
+                    </div>
+                  </>
+                ) : (
+                  /* No profile: show wallet address */
+                  <>
+                    <div className="info-label">Wallet</div>
+                    <div className="address-short">{shortenAddress(publicKey!.toBase58())}</div>
+                    <div className="address-full mono">{publicKey!.toBase58()}</div>
+                    <div className="sidebar-no-identity-hint">
+                      No identity found — create one below
+                    </div>
+                  </>
+                )}
               </div>
 
+              {/* Balance card */}
               <div className="info-card">
                 <div className="info-label">Balance</div>
                 <div className="balance-amount">
@@ -92,24 +143,30 @@ export default function Home() {
             {/* ── Right column: program UI ── */}
             <div className="main-panels">
 
-              {/* Loading: fetching PDA from chain */}
+              {/* Checking PDA — full-panel loading state */}
               {loading && (
-                <div className="loading-state">
-                  <span className="loading-dots">···</span>
-                  <span>Fetching on-chain data…</span>
+                <div className="identity-checking-panel">
+                  <div className="identity-checking-ring">
+                    <div className="identity-checking-spinner-lg" />
+                    <span className="identity-checking-icon">◎</span>
+                  </div>
+                  <div className="identity-checking-text">
+                    <p className="identity-checking-title">Verifying on-chain identity</p>
+                    <p className="identity-checking-sub">
+                      Checking for a profile PDA at seeds{" "}
+                      <code>["profile", wallet]</code>
+                    </p>
+                  </div>
                 </div>
               )}
 
-              {/* No profile yet: show Create Profile form */}
+              {/* ── No profile → Create Profile screen ── */}
               {!loading && !profile && <CreateProfile />}
 
-              {/* Profile exists: show full dashboard */}
+              {/* ── Profile exists → Full dashboard ── */}
               {!loading && profile && (
                 <>
-                  {/* Identity & reputation overview */}
                   <Dashboard />
-
-                  {/* Work submission and review */}
                   <SubmitWork />
                   <ReviewWork />
                 </>

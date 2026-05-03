@@ -2208,3 +2208,226 @@
   border: 1px solid hsl(var(--card-border));
 }
 .rw-info-dot { flex-shrink: 0; font-style: normal; }
+
+/* ══════════════════════════════════════════════════════
+   IDENTITY-BASED LOGIN — header chip, sidebar, loading
+══════════════════════════════════════════════════════ */
+
+/* ── Header: identity chip ──────────────────────────── */
+.header-identity-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.8rem 0.3rem 0.55rem;
+  border-radius: 999px;
+  background: hsl(261 75% 65% / 0.1);
+  border: 1px solid hsl(261 75% 65% / 0.3);
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.header-identity-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: hsl(165 72% 50%);
+  box-shadow: 0 0 6px hsl(165 72% 50% / 0.8);
+  flex-shrink: 0;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+.header-identity-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: hsl(261 75% 75%);
+}
+
+.header-identity-suffix {
+  color: hsl(261 75% 55%);
+  font-weight: 500;
+}
+
+/* ── Sidebar: identity card ─────────────────────────── */
+.sidebar-identity-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle purple accent along the left edge when identity is confirmed */
+.sidebar-identity-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, hsl(261 75% 65%), hsl(165 72% 50%));
+  border-radius: 1rem 0 0 1rem;
+}
+
+/* Checking state */
+.sidebar-identity-checking {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-checking-spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid hsl(261 75% 65% / 0.2);
+  border-top-color: hsl(261 75% 65%);
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sidebar-checking-hint {
+  font-size: 0.72rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.15rem;
+}
+
+/* Username display */
+.sidebar-username {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: hsl(var(--foreground));
+  line-height: 1.1;
+  margin-top: 0.15rem;
+}
+
+.sidebar-sol-suffix {
+  color: hsl(261 75% 60%);
+  font-weight: 500;
+}
+
+.sidebar-wallet-addr {
+  font-family: var(--app-font-mono);
+  font-size: 0.72rem;
+  color: hsl(220 10% 40%);
+  margin-top: 0.1rem;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: hsl(165 72% 50%);
+  margin-top: 0.35rem;
+}
+
+.sidebar-verified-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(165 72% 50%);
+  box-shadow: 0 0 5px hsl(165 72% 50% / 0.6);
+  flex-shrink: 0;
+}
+
+.sidebar-no-identity-hint {
+  font-size: 0.72rem;
+  color: hsl(40 80% 55%);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+/* ── Main area: identity-checking loading panel ──────── */
+.identity-checking-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 3.5rem 2rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--card-border));
+  border-radius: 1.5rem;
+  text-align: center;
+}
+
+.identity-checking-ring {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.identity-checking-spinner-lg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid hsl(261 75% 65% / 0.15);
+  border-top-color: hsl(261 75% 65%);
+  animation: spin 1s linear infinite;
+}
+
+.identity-checking-icon {
+  font-size: 1.6rem;
+  background: linear-gradient(135deg, hsl(261 75% 65%), hsl(165 72% 50%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.identity-checking-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.identity-checking-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.identity-checking-sub {
+  font-size: 0.78rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+  margin: 0;
+}
+
+.identity-checking-sub code {
+  font-family: var(--app-font-mono);
+  font-size: 0.72rem;
+  color: hsl(261 75% 65%);
+  background: hsl(261 75% 65% / 0.1);
+  padding: 0.1em 0.4em;
+  border-radius: 0.3rem;
+}
+
+/* ── Dashboard: PDA note (replaces old wallet-addr) ─── */
+.db-pda-note {
+  font-size: 0.67rem;
+  color: hsl(220 10% 38%);
+  margin-top: 0.2rem;
+  line-height: 1.5;
+}
+
+.db-pda-note code {
+  font-family: var(--app-font-mono);
+  font-size: 0.65rem;
+  color: hsl(261 75% 55%);
+  background: hsl(261 75% 65% / 0.08);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}

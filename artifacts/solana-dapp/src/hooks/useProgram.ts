@@ -1,8 +1,10 @@
 /**
  * useProgram — React hook that wires Anchor to the connected wallet.
  *
- * Returns ready-to-call async functions for every on-chain instruction plus
- * helpers to fetch profile and work record data.
+ * Flow:
+ *   1. Wallet connects → useEffect fires → refresh() fetches UserProfile PDA
+ *   2. If PDA exists  → profile state is populated  → UI shows dashboard
+ *   3. If PDA missing → profile stays null           → UI shows CreateProfile
  *
  * Usage:
  *   const { profile, workRecords, loading, callCreateProfile, ... } = useProgram();
@@ -48,9 +50,9 @@ export function useProgram() {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
 
-  const [profile, setProfile]         = useState<UserProfile | null>(null);
-  const [workRecords, setWorkRecords]  = useState<WorkRecord[]>([]);
-  const [loading, setLoading]          = useState(false);
+  const [profile, setProfile]        = useState<UserProfile | null>(null);
+  const [workRecords, setWorkRecords] = useState<WorkRecord[]>([]);
+  const [loading, setLoading]         = useState(false);
 
   // ── Refresh: load profile + work records from chain ──────────────────────
   const refresh = useCallback(async () => {
@@ -68,18 +70,14 @@ export function useProgram() {
     }
   }, [wallet, connection]);
 
-  const fetchProfileOnly = useCallback(async () => {
-    if (!wallet) return null;
-    return fetchProfile(wallet, connection, wallet.publicKey) as Promise<UserProfile | null>;
-  }, [wallet, connection]);
-
-  // Fetch on wallet connect / disconnect
+  // ── Auto-fetch when wallet connects / reset when it disconnects ───────────
   useEffect(() => {
     if (wallet) {
       refresh();
     } else {
       setProfile(null);
       setWorkRecords([]);
+      setLoading(false);
     }
   }, [wallet, refresh]);
 
@@ -89,7 +87,7 @@ export function useProgram() {
    * callCreateProfile — calls create_profile on-chain.
    *
    * PDA created: [b"profile", walletPublicKey]
-   * After success, refreshes local state so the UI shows the new profile.
+   * After success, refreshes local state — Home will transition to dashboard.
    */
   const callCreateProfile = useCallback(
     async (username: string): Promise<TxResult> => {
@@ -132,7 +130,6 @@ export function useProgram() {
    * PDAs involved:
    *   - profilePda  — reputation_score += 10
    *   - workPda     — verified set to true
-   * The caller acts as the verifier signer in this demo.
    */
   const callVerifyWork = useCallback(
     async (profileOwnerKey: PublicKey, jobId: string): Promise<TxResult> => {
@@ -153,8 +150,7 @@ export function useProgram() {
    *
    * PDAs involved:
    *   - profilePda  — reputation_score -= 5 (floored at 0)
-   *   - workPda     — NOT marked verified (stays false)
-   * The caller acts as the verifier signer in this demo.
+   *   - workPda     — stays unverified
    */
   const callRejectWork = useCallback(
     async (profileOwnerKey: PublicKey, jobId: string): Promise<TxResult> => {
@@ -176,7 +172,6 @@ export function useProgram() {
     workRecords,
     loading,
     refresh,
-    fetchProfileOnly,
     callCreateProfile,
     callSubmitWork,
     callVerifyWork,
@@ -189,10 +184,8 @@ export function useProgram() {
 /** Extract a readable message from Anchor errors or plain Error objects. */
 function parseAnchorError(e: unknown): string {
   if (e instanceof Error) {
-    // Anchor wraps program errors: look for the custom message
     const match = e.message.match(/Error Message: (.+?)(\.|$)/);
     if (match) return match[1];
-    // Simulation / RPC error
     if (e.message.includes("custom program error")) {
       return "Program error — check that the program is deployed and the program ID is correct.";
     }
