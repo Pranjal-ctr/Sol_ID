@@ -68,6 +68,11 @@ export function useProgram() {
     }
   }, [wallet, connection]);
 
+  const fetchProfileOnly = useCallback(async () => {
+    if (!wallet) return null;
+    return fetchProfile(wallet, connection, wallet.publicKey) as Promise<UserProfile | null>;
+  }, [wallet, connection]);
+
   // Fetch on wallet connect / disconnect
   useEffect(() => {
     if (wallet) {
@@ -171,6 +176,7 @@ export function useProgram() {
     workRecords,
     loading,
     refresh,
+    fetchProfileOnly,
     callCreateProfile,
     callSubmitWork,
     callVerifyWork,
