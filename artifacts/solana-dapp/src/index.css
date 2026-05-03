@@ -172,6 +172,9 @@
 .db-tier--trusted { color: hsl(165 72% 50%); border-color: hsl(165 72% 50% / 0.3); background: hsl(165 72% 50% / 0.08); }
 .db-tier--elite { color: hsl(261 75% 65%); border-color: hsl(261 75% 65% / 0.3); background: hsl(261 75% 65% / 0.08); }
 .db-score-badge { font-size: 0.72rem; font-weight: 700; color: hsl(165 72% 55%); padding: 0.25rem 0.55rem; border-radius: 999px; background: hsl(165 72% 50% / 0.08); border: 1px solid hsl(165 72% 50% / 0.18); }
+.db-rep-badge { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid; box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset; }
+.db-rep-badge--trusted { color: hsl(165 72% 55%); background: hsl(165 72% 50% / 0.1); border-color: hsl(165 72% 50% / 0.28); }
+.db-rep-badge--elite { color: hsl(261 75% 72%); background: hsl(261 75% 65% / 0.1); border-color: hsl(261 75% 65% / 0.28); }
 .db-pda-note { font-size: 0.67rem; color: hsl(220 10% 38%); line-height: 1.5; }
 .db-pda-note code { font-family: var(--app-font-mono); font-size: 0.65rem; color: hsl(261 75% 55%); background: hsl(261 75% 65% / 0.08); padding: 0.1em 0.35em; border-radius: 0.25rem; }
 .db-refresh-btn { position: absolute; top: 1rem; right: 1rem; width: 34px; height: 34px; border-radius: 50%; border: 1px solid hsl(var(--card-border)); background: transparent; color: hsl(var(--muted-foreground)); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }

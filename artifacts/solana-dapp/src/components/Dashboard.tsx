@@ -52,6 +52,16 @@ function StatCard({
   );
 }
 
+function ReputationBadge({ score }: { score: number }) {
+  if (score > 100) {
+    return <span className="db-rep-badge db-rep-badge--elite">Elite Contributor</span>;
+  }
+  if (score > 50) {
+    return <span className="db-rep-badge db-rep-badge--trusted">Trusted Freelancer</span>;
+  }
+  return null;
+}
+
 export default function Dashboard() {
   const { profile, workRecords, loading, refresh } = useProgram();
 
@@ -113,6 +123,7 @@ export default function Dashboard() {
           <div className="db-hero-row">
             <span className={`db-tier ${tierColor}`}>{repTier}</span>
             <span className="db-score-badge">{repScore} points</span>
+            <ReputationBadge score={repScore} />
           </div>
           <div className="db-pda-note">
             UserProfile PDA · <code>["profile", wallet]</code>
