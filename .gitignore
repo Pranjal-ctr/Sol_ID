@@ -1,34 +1,63 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ─── Dependencies ───
+node_modules/
 
-# compiled output
-dist
-tmp
-out-tsc
+# ─── Build Output ───
+dist/
+build/
+out-tsc/
 *.tsbuildinfo
-.expo
-.expo-shared
 
-# dependencies
-node_modules
+# ─── Anchor / Rust ───
+anchor/target/
+anchor/solana-release-*.tar.bz2
+*.so
 
-# IDEs and editors
-/.idea
+# ─── Environment & Secrets ───
+.env
+.env.*
+!.env.example
+
+# ─── Wallet Keypairs ───
+*.json.bak
+id.json
+deploy-keypair.json
+*-keypair.json
+wallet.json
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.sublime-workspace
+*.launch
+.settings/
 .project
 .classpath
 .c9/
-*.launch
-.settings/
-*.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# ─── System Files ───
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# misc
-/.sass-cache
+# ─── Replit ───
+.cache/
+.local/
+.replit
+.replitignore
+.expo
+.expo-shared
+
+# ─── Replit Scaffold (legacy, not production code) ───
+artifacts/
+attached_assets/
+/lib/
+scripts/
+replit.md
+pnpm-lock.yaml
+pnpm-workspace.yaml
+.npmrc
+
+# ─── Misc ───
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -36,14 +65,5 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-
-# System Files
-.DS_Store
-Thumbs.db
-
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
-
-# Replit
-.cache/
-.local/
+/.sass-cache
+tmp/

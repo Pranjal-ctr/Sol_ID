@@ -1,10 +1,7 @@
 use anchor_lang::prelude::*;
 
-declare_id!("IdentRep11111111111111111111111111111111111");
+declare_id!("4DNAXZBUwD8ejo6UEDzbq89faMjARWwV6DuWJMKHnyDm");
 
-// ─────────────────────────────────────────────
-// Program Entry Point
-// ─────────────────────────────────────────────
 #[program]
 pub mod identity_reputation {
     use super::*;

@@ -1,31 +1,21 @@
 [toolchain]
-anchor_version = "0.30.1"
+anchor_version = "1.0.2"
 
 [features]
 resolution = true
 skip-lint = false
 
-# ── Program IDs per cluster ───────────────────────────────────────────────────
-# After `anchor deploy` on devnet, replace the placeholder below with the
-# real program ID printed in the terminal, then run `anchor build` again so
-# the IDL and binary stay in sync.
+[programs.devnet]
+identity_reputation = "4DNAXZBUwD8ejo6UEDzbq89faMjARWwV6DuWJMKHnyDm"
 
 [programs.localnet]
-identity_reputation = "IdentRep11111111111111111111111111111111111"
-
-[programs.devnet]
-identity_reputation = "IdentRep11111111111111111111111111111111111"
-
-[registry]
-url = "https://api.apr.dev"
-
-# ── Active provider ───────────────────────────────────────────────────────────
-# Switch `cluster` between "Localnet" and "Devnet" as needed.
-# `wallet` must point to a keypair that holds devnet SOL.
+identity_reputation = "AW3tnz9dMLYQz5deDNKV9bCuX77sNundHrcuD6oVS5Zi"
 
 [provider]
-cluster = "Devnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[hooks]
