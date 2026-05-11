@@ -16,17 +16,29 @@
   <a href="https://explorer.solana.com/address/4DNAXZBUwD8ejo6UEDzbq89faMjARWwV6DuWJMKHnyDm?cluster=devnet"><img src="https://img.shields.io/badge/Program-4DNAXZ...nyDm-14F195?style=flat-square" alt="Program ID" /></a>
 </p>
 
+<p align="center">
+  <a href="https://trustlayer-beta.vercel.app"><strong>Live Demo</strong></a> · 
+  <a href="https://github.com/Pranjal-ctr/Sol_ID"><strong>GitHub</strong></a> · 
+  <a href="https://explorer.solana.com/address/4DNAXZBUwD8ejo6UEDzbq89faMjARWwV6DuWJMKHnyDm?cluster=devnet"><strong>Solana Explorer</strong></a>
+</p>
+
 ---
 
 ## Overview
 
-**TrustLayer** is a composable, on-chain identity and reputation protocol built on Solana. It enables any wallet to establish a verifiable trust profile — linking identity, contribution history, and reputation into a single portable primitive that DAOs, DeFi protocols, hiring platforms, and AI agents can query.
+**TrustLayer** is a composable, on-chain identity and reputation protocol built on Solana. It enables any wallet to establish a verifiable trust profile — linking identity, contribution history, and reputation into a single portable primitive that DAOs, DeFi protocols, hiring platforms, and AI agents can query programmatically.
 
-Unlike centralized reputation systems, TrustLayer stores every identity, work submission, and verification event as on-chain Program Derived Accounts (PDAs), making trust data fully transparent, permissionless, and composable.
+Every identity, work submission, and verification lives as an on-chain PDA — fully transparent, permissionless, and composable by design.
 
-### Core Thesis
+> *Reputation should be a portable, on-chain primitive — not a siloed score locked inside platforms.*
 
-> Reputation should be a portable, on-chain primitive — not a siloed score locked inside platforms.
+---
+
+## Why TrustLayer Matters
+
+Web3 reputation today is fragmented. Contributor history lives in Discord roles, GitHub stars, and platform-specific scores — none of which travel across protocols. When a DAO votes, a DeFi protocol underwrites a loan, or a hackathon judges submissions, there is no shared trust layer to reference.
+
+TrustLayer solves this by making **trust a composable on-chain primitive**: a single verifiable identity that any Solana protocol can query, reducing Sybil risk and enabling merit-based decisions at the ecosystem level.
 
 ---
 
@@ -45,39 +57,64 @@ Unlike centralized reputation systems, TrustLayer stores every identity, work su
 
 ---
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Landing Page</strong></td>
+    <td align="center"><strong>Trust Overview</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/landing.png" alt="Landing Page" width="450" /></td>
+    <td><img src="docs/screenshots/dashboard.png" alt="Trust Overview Dashboard" width="450" /></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Identity Passport</strong></td>
+    <td align="center"><strong>Ecosystem Query</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/profile.png" alt="Identity Passport" width="450" /></td>
+    <td><img src="docs/screenshots/ecosystem.png" alt="Ecosystem Query" width="450" /></td>
+  </tr>
+</table>
+
+> **Note:** To add screenshots, save images to `docs/screenshots/` with the filenames above.
+
+---
+
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Frontend (Vite + React)               │
+│                    Frontend (Vite + React)              │
 │                                                         │
-│  ConnectWallet ──► CreateProfile ──► Dashboard           │
-│       │                                  │               │
-│       ▼                                  ▼               │
-│  SNS Lookup          SubmitWork ◄──► VerifyWork          │
-│  (.sol / .tl)            │              │                │
-│                          ▼              ▼                │
-│                   WorkHistory    Leaderboard              │
+│  ConnectWallet ──► CreateProfile ──► Dashboard          │
+│       │                                  │              │
+│       ▼                                  ▼              │
+│  SNS Lookup          SubmitWork ◄──► VerifyWork         │
+│  (.sol / .tl)            │              │               │
+│                          ▼              ▼               │
+│                   WorkHistory    Leaderboard            │
 │                                                         │
-│                    EcosystemQuery                         │
-│                    (search by username/wallet)            │
+│                    EcosystemQuery                       │
+│                    (search by username/wallet)          │
 └───────────────────────────┬─────────────────────────────┘
                             │
                     Anchor RPC Calls
                             │
 ┌───────────────────────────▼─────────────────────────────┐
-│              Solana Program (Anchor 0.30.1)              │
+│              Solana Program (Anchor 0.30.1)             │
 │              Program ID: 4DNAXZBUwD8ejo6U...            │
 │                                                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌────────────────┐  │
-│  │ UserProfile  │  │ WorkRecord  │  │  ReviewWork    │  │
-│  │    PDA       │  │    PDA      │  │  (verify/      │  │
-│  │             │  │             │  │   reject)      │  │
-│  │ seeds:      │  │ seeds:      │  │               │  │
-│  │ ["profile", │  │ ["work",    │  │  +10 rep      │  │
-│  │  wallet]    │  │  profile,   │  │  -5 rep       │  │
-│  │             │  │  job_id]    │  │               │  │
-│  └─────────────┘  └─────────────┘  └────────────────┘  │
+│  ┌─────────────┐  ┌─────────────┐  ┌────────────────┐   │
+│  │ UserProfile │  │ WorkRecord  │  │  ReviewWork    │   │
+│  │    PDA      │  │    PDA      │  │  (verify/      │   │
+│  │             │  │             │  │   reject)      │   │
+│  │ seeds:      │  │ seeds:      │  │                │   │
+│  │ ["profile", │  │ ["work",    │  │  +10 rep       │   │
+│  │  wallet]    │  │  profile,   │  │  -5 rep        │   │
+│  │             │  │  job_id]    │  │                │   │
+│  └─────────────┘  └─────────────┘  └────────────────┘   │
 │                                                         │
 │  Events: ProfileCreated, WorkSubmitted, WorkReviewed    │
 └─────────────────────────────────────────────────────────┘
